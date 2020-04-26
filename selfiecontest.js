@@ -5,8 +5,12 @@ const app = express()
 
 app.use(express.static(path.join(__dirname, 'build')));
 
-app.get('/', (req, res, next) => {
+app.get('/app', (req, res, next) => {
 	res.sendFile(path.join(__dirname, 'build', 'index.html'))
+})
+
+app.get('/', (req, res, next) => {
+	res.json({ msg: 'App Deployed', Tested: 'No' })
 })
 
 app.listen(3200, () => {
