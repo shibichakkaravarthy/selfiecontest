@@ -31,7 +31,22 @@ function App() {
       setUserStatus({ msg: `Error! Please ask in Bill Counter`, type: 'red', visible: true })
       setTimeout(() => {
         setUserStatus({ msg: ``, type: '', visible: false })
-      })
+      }, 4000)
+    })
+  }
+
+  const onPhotoUpload = () => {
+    let selfie = new FormData()
+
+    selfie.append('photo', file)
+    selfie.append('memberId', user._id)
+
+    axios.post('http://ec2-15-206-194-148.ap-south-1.compute.amazonaws.com:3000/selfie/add', selfie, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .then(selfie => {
+      alert('Selfie Added')
+    })
+    .catch(err => {
+      alert(err)
     })
   }
 
@@ -44,7 +59,7 @@ function App() {
 
       <div className='card' >
         <div className="label">Mobile Number</div>
-        <Input placeholder="Mobile Number" disabled={mobileTextBox} type='number' addonAfter={<ArrowRightOutlined onClick={() => onMobileSubmit()} className='button' />} className='input' onChange={event => setMobile(event.target.value)} />
+        <Input placeholder="Mobile Number" disabled={mobileTextBox} type='number' className='input' onChange={event => setMobile(event.target.value)} />
 
         {
           (userStatus.visible)
@@ -52,10 +67,31 @@ function App() {
           <div style={{ color: userStatus.type, padding: '10px', fontSize: '18px' }} >{userStatus.msg}</div>
           :
           null
-        } 
+        }
 
-        <div className="label">Upload Photo</div>
-        <Input placeholder="Basic usage" disabled={!mobileTextBox} className='input' type="file" capture="user" accept="image/*" onChange={file => onInput(file)}  />
+        {
+          (!mobileTextBox)
+          ?
+          <div style={{ margin: '15px' }} >
+            <Button type="primary" shape="round" size='large' onClick={() => onMobileSubmit()} >Verify</Button>
+          </div>
+          :
+          null
+        }
+        
+        {
+          (mobileTextBox)
+          ?
+          <div>
+            <div className="label">Upload Photo</div>
+            <Input className='input' type="file" capture="user" accept="image/*" onChange={file => onInput(file)}  />
+            <div style={{ margin: '15px' }} >
+              <Button shape="round" size='large' onClick={() => onPhotoUpload()} >Upload</Button>
+            </div>
+          </div>
+          :
+          null
+        }
       </div>
     </div>
   );
